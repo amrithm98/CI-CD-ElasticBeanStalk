@@ -178,15 +178,22 @@ Metadata:
       DBPort:
         default: "Database Port"
       RepositoryName:
-        default: "Code Commit Repository Name"
+        default: "Github Repository Name"
       RepositoryBranchDev:
-        default: "Code Commit Repository Branch for dev deployment"
+        default: "Github Repository Branch for dev deployment"
       RepositoryBranchStaging:
-        default: "Code Commit Repository Branch for staging deployment"
+        default: "Github Repository Branch for staging deployment"
       RepositoryBranchProd:
-        default: "Code Commit Repository Branch for prod deployment"
+        default: "Github Repository Branch for prod deployment"
       SNSTopicArn:
         default: "SNS topic arn for manual approval stage in code pipeline"
+      GitHubToken:
+        Type: String
+        NoEcho: true
+        Description: GitHub API token - see https://github.com/blog/1509-personal-api-tokens
+        MinLength: 3
+        MaxLength: 100
+        ConstraintDescription: You must enter a GitHub personal access token
 
     ParameterGroups:
       - Label:
@@ -229,6 +236,7 @@ Metadata:
           - RepositoryBranchDev
           - RepositoryBranchStaging
           - RepositoryBranchProd
+          - GitHubToken
           - SNSTopicArn
 
 Resources:
@@ -288,53 +296,57 @@ Resources:
         RepositoryName: !Ref RepositoryName
         RepositoryBranch: !Ref RepositoryBranchDev
         SNSTopicArn: !Ref SNSTopicArn
+        GitHubToken: !Ref GitHubToken
 
-  EnvironmentStaging:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/environment-staging.yaml"
-      Parameters:
-        Name: !Ref AWS::StackName
-        VpcId: !GetAtt VPC.Outputs.VpcId
-        VpcCIDR: !Ref VpcCIDR
-        PublicSubnets: !GetAtt VPC.Outputs.PublicSubnets
-        PrivateSubnets: !GetAtt VPC.Outputs.PrivateSubnets
-        PublicSubnetsStr: !GetAtt VPC.Outputs.PublicSubnets
-        PrivateSubnetsStr: !GetAtt VPC.Outputs.PrivateSubnets
-        BeanstackApplication: !GetAtt ElasticBeanstackApplication.Outputs.BeanstackApplication
-        SolutionStackName: !Ref SolutionStackName
-        BeanstackInstanceType: !Ref BeanstackInstanceType
-        KeyName: !Ref KeyName
-        DBInstanceClass: !Ref DBInstanceClass
-        DBName: !Ref DBName
-        DBMasterUsername: !Ref DBMasterUsername
-        DBMasterUserPassword: !Ref DBMasterUserPassword
-        DBPort: !Ref DBPort
-        RepositoryName: !Ref RepositoryName
-        RepositoryBranch: !Ref RepositoryBranchStaging
-        SNSTopicArn: !Ref SNSTopicArn
+#  EnvironmentStaging:
+#    Type: AWS::CloudFormation::Stack
+#    Properties:
+#      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/environment-staging.yaml"
+#      Parameters:
+#        Name: !Ref AWS::StackName
+#        VpcId: !GetAtt VPC.Outputs.VpcId
+#        VpcCIDR: !Ref VpcCIDR
+#        PublicSubnets: !GetAtt VPC.Outputs.PublicSubnets
+#        PrivateSubnets: !GetAtt VPC.Outputs.PrivateSubnets
+#        PublicSubnetsStr: !GetAtt VPC.Outputs.PublicSubnets
+#        PrivateSubnetsStr: !GetAtt VPC.Outputs.PrivateSubnets
+#        BeanstackApplication: !GetAtt ElasticBeanstackApplication.Outputs.BeanstackApplication
+#        SolutionStackName: !Ref SolutionStackName
+#        BeanstackInstanceType: !Ref BeanstackInstanceType
+#        KeyName: !Ref KeyName
+#        DBInstanceClass: !Ref DBInstanceClass
+#        DBName: !Ref DBName
+#        DBMasterUsername: !Ref DBMasterUsername
+#        DBMasterUserPassword: !Ref DBMasterUserPassword
+#        DBPort: !Ref DBPort
+#        RepositoryName: !Ref RepositoryName
+#        RepositoryBranch: !Ref RepositoryBranchStaging
+#        SNSTopicArn: !Ref SNSTopicArn
+#        GitHubToken: !Ref GitHubToken
 
-  EnvironmentProd:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/environment-prod.yaml"
-      Parameters:
-        Name: !Ref AWS::StackName
-        VpcId: !GetAtt VPC.Outputs.VpcId
-        VpcCIDR: !Ref VpcCIDR
-        PublicSubnets: !GetAtt VPC.Outputs.PublicSubnets
-        PrivateSubnets: !GetAtt VPC.Outputs.PrivateSubnets
-        PublicSubnetsStr: !GetAtt VPC.Outputs.PublicSubnets
-        PrivateSubnetsStr: !GetAtt VPC.Outputs.PrivateSubnets
-        BeanstackApplication: !GetAtt ElasticBeanstackApplication.Outputs.BeanstackApplication
-        SolutionStackName: !Ref SolutionStackName
-        BeanstackInstanceType: !Ref BeanstackInstanceType
-        KeyName: !Ref KeyName
-        DBInstanceClass: !Ref DBInstanceClass
-        DBName: !Ref DBName
-        DBMasterUsername: !Ref DBMasterUsername
-        DBMasterUserPassword: !Ref DBMasterUserPassword
-        DBPort: !Ref DBPort
-        RepositoryName: !Ref RepositoryName
-        RepositoryBranch: !Ref RepositoryBranchProd
-        SNSTopicArn: !Ref SNSTopicArn
+#
+#  EnvironmentProd:
+#    Type: AWS::CloudFormation::Stack
+#    Properties:
+#      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/environment-prod.yaml"
+#      Parameters:
+#        Name: !Ref AWS::StackName
+#        VpcId: !GetAtt VPC.Outputs.VpcId
+#        VpcCIDR: !Ref VpcCIDR
+#        PublicSubnets: !GetAtt VPC.Outputs.PublicSubnets
+#        PrivateSubnets: !GetAtt VPC.Outputs.PrivateSubnets
+#        PublicSubnetsStr: !GetAtt VPC.Outputs.PublicSubnets
+#        PrivateSubnetsStr: !GetAtt VPC.Outputs.PrivateSubnets
+#        BeanstackApplication: !GetAtt ElasticBeanstackApplication.Outputs.BeanstackApplication
+#        SolutionStackName: !Ref SolutionStackName
+#        BeanstackInstanceType: !Ref BeanstackInstanceType
+#        KeyName: !Ref KeyName
+#        DBInstanceClass: !Ref DBInstanceClass
+#        DBName: !Ref DBName
+#        DBMasterUsername: !Ref DBMasterUsername
+#        DBMasterUserPassword: !Ref DBMasterUserPassword
+#        DBPort: !Ref DBPort
+#        RepositoryName: !Ref RepositoryName
+#        RepositoryBranch: !Ref RepositoryBranchProd
+#        SNSTopicArn: !Ref SNSTopicArn
+#        GitHubToken: !Ref GitHubToken

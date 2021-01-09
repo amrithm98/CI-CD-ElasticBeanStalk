@@ -42,13 +42,6 @@ Parameters:
     Type: String
   SNSTopicArn:
     Type: String
-  GitBranch:
-    Type: String
-    Default: master
-    Description: GitHub git repository branch - change triggers a new build
-    MinLength: 1
-    MaxLength: 100
-    ConstraintDescription: You must enter a GitHub repository branch name
   GitHubToken:
     Type: String
     NoEcho: true
@@ -364,8 +357,6 @@ Resources:
               Ref: RepositoryBranch
             RepositoryName:
               Ref: RepositoryName
-            Branch:
-              Ref: GitBranch
             OAuthToken:
               Ref: GitHubToken
           RunOrder: 1
