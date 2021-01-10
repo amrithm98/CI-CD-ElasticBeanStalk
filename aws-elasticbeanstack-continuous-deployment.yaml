@@ -2,9 +2,9 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Description: >
-  This template creates nested stack for building a continuous inregration and delivery pipeline
-  to deploy a php application hosted in elasticbeanstack environment with proper rollout and rollback mechanism.
-  This solution is developer friendly and it eases the process of deployment and release mamangement.
+  This template creates nested stack for building a continuous integration and delivery pipeline
+  to deploy a Node.js application hosted in elasticbeanstack environment with proper rollout and rollback mechanism.
+  This solution is developer friendly and it eases the process of deployment and release management.
 
 Parameters:
   VpcCIDR:
@@ -34,13 +34,13 @@ Parameters:
 
   TemplateBucket:
     Type: String
-    Default: aws-elasticbeanstack-continuous-deployment
+    Default: amrith-aws-cfn
     Description: The S3 bucket from which to fetch the templates used by this stack.
 
   BastionHostKeyName:
     Description: Name of an existing EC2 KeyPair to enable SSH access to the bastion host
     Type: String
-    Default: key
+    Default: DefaultKeyPair
 
   BastionHostInstanceType:
     Description: EC2 instance type for bastion host
@@ -61,29 +61,29 @@ Parameters:
   BeanstackAppName:
     Description: Elasticbeanstack Application Name
     Type: String
-    Default: myapp
+    Default: NodeJSEBStack
 
   SolutionStackName:
     Description: Elasticbeanstack Environment Solution Stack Name.
     Type: String
-    Default: 64bit Amazon Linux 2018.03 v2.8.6 running PHP 5.6
+    Default: 64bit Amazon Linux 2 v5.2.4 running Node.js 12
 
   KeyName:
     Description: Name of an existing EC2 KeyPair to enable SSH access to elasticbeanstack instances
     Type: String
-    Default: key
+    Default: DefaultKeyPair
 
   BeanstackInstanceType:
     Description: Beanstack EC2 instance type
     Type: String
-    Default: t2.medium
+    Default: t2.micro
     AllowedValues: [t1.micro, t2.nano, t2.micro, t2.small, t2.medium, m3.medium]
     ConstraintDescription: Enter a vaild Beanstack EC2 instance type.
 
   DBInstanceClass:
     Description: RDS instance type
     Type: String
-    Default: db.t2.medium
+    Default: db.t2.micro
     AllowedValues: [db.t2.micro, db.t2.small, db.t2.medium, db.t2.large, db.t2.xlarge, db.t2.2xlarge]
     ConstraintDescription: Enter a vaild RDS instance type.
 
@@ -106,6 +106,14 @@ Parameters:
     Description: Database Port
     Type: String
     Default: '3306'
+
+  GitHubUser:
+    Type: String
+    Default: amrithm98
+    Description: GitHub username or organization
+    MinLength: 3
+    MaxLength: 100
+    ConstraintDescription: You must enter a GitHub username or organization
 
   RepositoryName:
     Description: CodeCommit repo name.
@@ -133,6 +141,14 @@ Parameters:
     Default: master
     AllowedPattern: "[\\x20-\\x7E]*"
     ConstraintDescription: Can contain only ASCII characters.
+
+  GitHubToken:
+    Type: String
+    NoEcho: true
+    Description: GitHub API token - see https://github.com/blog/1509-personal-api-tokens
+    MinLength: 3
+    MaxLength: 100
+    ConstraintDescription: You must enter a GitHub personal access token
 
   SNSTopicArn:
     Description: SNS topic arn for manual approval stage in code pipeline
@@ -177,6 +193,8 @@ Metadata:
         default: "Database Master User Password"
       DBPort:
         default: "Database Port"
+      GitHubUser:
+        default: "amrithm98"
       RepositoryName:
         default: "Github Repository Name"
       RepositoryBranchDev:
@@ -232,6 +250,7 @@ Metadata:
       - Label:
           default: Code Pipeline Configuration
         Parameters:
+          - GitHubUser
           - RepositoryName
           - RepositoryBranchDev
           - RepositoryBranchStaging
@@ -297,6 +316,7 @@ Resources:
         RepositoryBranch: !Ref RepositoryBranchDev
         SNSTopicArn: !Ref SNSTopicArn
         GitHubToken: !Ref GitHubToken
+        GitHubUser: !Ref GitHubUser
 
 #  EnvironmentStaging:
 #    Type: AWS::CloudFormation::Stack

@@ -36,6 +36,13 @@ Parameters:
     Type: String
   SolutionStackName:
     Type: String
+  GitHubUser:
+    Type: String
+    Default: amrithm98
+    Description: GitHub username or organization
+    MinLength: 3
+    MaxLength: 100
+    ConstraintDescription: You must enter a GitHub username or organization
   RepositoryName:
     Type: String
   RepositoryBranch:
@@ -353,9 +360,11 @@ Resources:
           OutputArtifacts:
           - Name: MyApp
           Configuration:
-            BranchName:
+            Owner:
+              Ref: GitHubUser
+            Branch:
               Ref: RepositoryBranch
-            RepositoryName:
+            Repo:
               Ref: RepositoryName
             OAuthToken:
               Ref: GitHubToken
