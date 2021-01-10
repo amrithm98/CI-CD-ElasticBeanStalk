@@ -83,8 +83,8 @@ Parameters:
   DBInstanceClass:
     Description: RDS instance type
     Type: String
-    Default: db.t2.micro
-    AllowedValues: [db.t2.micro, db.t2.small, db.t2.medium, db.t2.large, db.t2.xlarge, db.t2.2xlarge]
+    Default: db.t3.small
+    AllowedValues: [db.t2.micro, db.t2.small, db.t2.medium, db.t2.large, db.t2.xlarge, db.t2.2xlarge, db.t3.small]
     ConstraintDescription: Enter a vaild RDS instance type.
 
   DBName:

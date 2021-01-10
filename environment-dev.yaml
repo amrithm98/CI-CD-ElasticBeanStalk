@@ -157,7 +157,7 @@ Resources:
     Type: AWS::ElasticBeanstalk::ConfigurationTemplate
     Properties:
       ApplicationName: !Ref BeanstackApplication
-      Description: Configuration template for php application
+      Description: Configuration template for Node.js application
       OptionSettings:
       - Namespace: aws:ec2:vpc
         OptionName: VPCId
