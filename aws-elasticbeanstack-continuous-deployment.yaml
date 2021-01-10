@@ -118,6 +118,7 @@ Parameters:
   RepositoryName:
     Description: CodeCommit repo name.
     Type: String
+    Default: "Simple-Post-"
     AllowedPattern: "[\\x20-\\x7E]*"
     ConstraintDescription: Can contain only ASCII characters.
 
@@ -152,6 +153,7 @@ Parameters:
 
   SNSTopicArn:
     Description: SNS topic arn for manual approval stage in code pipeline
+    Default: arn:aws:sns:ap-south-1:581264238010:DefaultAlerts
     Type: String
 
 Metadata:

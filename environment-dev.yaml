@@ -83,7 +83,7 @@ Resources:
     Type: "AWS::RDS::DBSubnetGroup"
     Properties:
       DBSubnetGroupDescription: 'Subnet Group for RDS instance'
-      DBSubnetGroupName: !Join [ "-", [ !Ref Name, 'subnetgroup-dev' ] ]
+      DBSubnetGroupName: 'subnetgroup-dev'
       SubnetIds: !Ref PrivateSubnets
 
   AuroraCluster:
