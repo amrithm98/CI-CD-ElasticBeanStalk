@@ -178,6 +178,9 @@ Resources:
         OptionName: InstanceType
         Value: !Ref BeanstackInstanceType
       - Namespace: aws:autoscaling:launchconfiguration
+        OptionName: IamInstanceProfile
+        Value: aws-elasticbeanstalk-ec2-role
+      - Namespace: aws:autoscaling:launchconfiguration
         OptionName: RootVolumeSize
         Value: '20'
       - Namespace: aws:autoscaling:asg
